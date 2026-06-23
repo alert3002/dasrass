@@ -1,0 +1,47 @@
+# Codemagic CI — https://codemagic.io/apps
+# Repo: https://github.com/alert3002/dasrass
+workflows:
+  android-release:
+    name: Android Release
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    environment:
+      flutter: stable
+      vars:
+        API_BASE: https://api.dasrass.com/api
+    scripts:
+      - name: Flutter packages
+        script: flutter pub get
+      - name: Analyze
+        script: flutter analyze
+      - name: Build APK (split per ABI)
+        script: flutter build apk --release --split-per-abi --dart-define=API_BASE=$API_BASE
+      - name: Build AAB (Google Play)
+        script: flutter build appbundle --release --dart-define=API_BASE=$API_BASE
+    artifacts:
+      - build/**/outputs/**/*.apk
+      - build/**/outputs/**/*.aab
+
+  ios-release:
+    name: iOS Release
+    max_build_duration: 90
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: codemagic
+    environment:
+      flutter: stable
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.dastrass.dastrassApp
+      vars:
+        API_BASE: https://api.dasrass.com/api
+    scripts:
+      - name: Flutter packages
+        script: flutter pub get
+      - name: Build IPA
+        script: |
+          flutter build ipa --release \
+            --dart-define=API_BASE=$API_BASE \
+            --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - build/ios/ipa/*.ipa

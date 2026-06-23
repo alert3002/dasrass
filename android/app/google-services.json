@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1047661994555",
+    "project_id": "comdastrass",
+    "storage_bucket": "comdastrass.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1047661994555:android:03e41238ac13cb607d321e",
+        "android_client_info": {
+          "package_name": "com.dastrass.dastrass_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCR5FEKSamBV6O6zD_8gd76Ki3gcS-hMKw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
