@@ -53,6 +53,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   bool _saving = false;
   bool _adActionBusy = false;
   bool _avatarSaving = false;
+  bool _deletingAccount = false;
   String? _formError;
 
   static final _dateFmt = DateFormat('dd.MM.yyyy');
@@ -79,6 +80,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await AuthService.instance.setToken(null);
     if (!mounted) return;
     context.go('/login');
+  }
+
+  Future<void> _handleDeleteAccount() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: !_deletingAccount,
+      builder: (ctx) => _DeleteAccountDialog(deleting: _deletingAccount),
+    );
+    if (confirmed != true || !mounted) return;
+
+    setState(() => _deletingAccount = true);
+    try {
+      await DastrassApi.instance.deleteAccount();
+      await AuthService.instance.setToken(null);
+      if (!mounted) return;
+      context.go('/login');
+    } on ApiException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.message)));
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(friendlyErrorMessage(e))));
+      }
+    } finally {
+      if (mounted) setState(() => _deletingAccount = false);
+    }
   }
 
   @override
@@ -1111,9 +1139,54 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
+            const SizedBox(height: 16),
+            _buildDeleteAccountSection(onBg, muted, cardBg, border),
           ],
         );
       },
+    );
+  }
+
+  Widget _buildDeleteAccountSection(Color onBg, Color muted, Color cardBg, Color border) {
+    return Container(
+      decoration: BoxDecoration(
+        color: cardBg,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: const Color(0xFFFFC9C9).withValues(alpha: 0.6)),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            'Удаление аккаунта',
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16, color: onBg),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            'Все объявления будут скрыты, данные профиля и переписки удалены без возможности восстановления.',
+            style: TextStyle(fontSize: 13.5, color: muted, height: 1.35),
+          ),
+          const SizedBox(height: 14),
+          OutlinedButton.icon(
+            onPressed: _deletingAccount ? null : _handleDeleteAccount,
+            icon: _deletingAccount
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.delete_outline_rounded, size: 20),
+            label: Text(_deletingAccount ? 'Удаление...' : 'Удалить аккаунт'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: const Color(0xFFDC3545),
+              side: const BorderSide(color: Color(0xFFFFB4B4)),
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -1276,6 +1349,81 @@ class _ProfileScreenState extends State<ProfileScreen> {
               Text(desc, style: TextStyle(fontSize: 12.5, color: muted, height: 1.3)),
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class _DeleteAccountDialog extends StatelessWidget {
+  const _DeleteAccountDialog({required this.deleting});
+
+  final bool deleting;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final onBg = theme.colorScheme.onSurface;
+    final muted = const Color(0xFF8B949E);
+
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      insetPadding: const EdgeInsets.symmetric(horizontal: 28),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(22, 22, 22, 18),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFEBEE),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.person_remove_outlined, color: Color(0xFFDC3545), size: 30),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              'Удалить аккаунт?',
+              textAlign: TextAlign.center,
+              style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w800, color: onBg),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              'Вы уверены, что хотите удалить аккаунт? Это действие нельзя отменить.',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 14.5, color: muted, height: 1.4),
+            ),
+            const SizedBox(height: 22),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: deleting ? null : () => Navigator.of(context).pop(false),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 13),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text('Нет'),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: FilledButton(
+                    onPressed: deleting ? null : () => Navigator.of(context).pop(true),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: const Color(0xFFDC3545),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 13),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    ),
+                    child: const Text('Да, удалить'),
+                  ),
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );

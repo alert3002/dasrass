@@ -717,6 +717,13 @@ class DastrassApi {
     });
   }
 
+  Future<void> deleteAccount() async {
+    final data = await postJson('/auth/delete-account/', {});
+    if (data is Map && data['ok'] != true) {
+      throw ApiException('${data['error'] ?? 'Не удалось удалить аккаунт'}');
+    }
+  }
+
   Future<Map<String, dynamic>> uploadProfileAvatar(Uint8List bytes, String filename) async {
     final uri = _uri('/auth/profile-avatar/');
     final req = http.MultipartRequest('POST', uri);
