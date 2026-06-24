@@ -35,13 +35,26 @@ workflows:
         bundle_identifier: com.dastrass.dastrassApp
       vars:
         API_BASE: https://api.dasrass.com/api
+        APP_STORE_APPLE_ID: 6783342154
     scripts:
       - name: Flutter packages
         script: flutter pub get
+      - name: Set build number from App Store Connect
+        script: |
+          LATEST=$(app-store-connect get-latest-app-store-build-number "$APP_STORE_APPLE_ID")
+          BUILD_NUM=$((LATEST + 1))
+          echo "Using build number: $BUILD_NUM (previous: $LATEST)"
+          echo "BUILD_NUM=$BUILD_NUM" >> $CM_ENV
       - name: Build IPA
         script: |
           flutter build ipa --release \
+            --build-name=1.0.0 \
+            --build-number=$BUILD_NUM \
             --dart-define=API_BASE=$API_BASE \
             --export-options-plist=/Users/builder/export_options.plist
     artifacts:
       - build/ios/ipa/*.ipa
+    publishing:
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: false
