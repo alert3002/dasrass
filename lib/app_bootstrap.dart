@@ -12,6 +12,7 @@ import 'services/favorites_store.dart';
 import 'services/message_unread_hub.dart';
 import 'services/notification_unread_hub.dart';
 import 'services/push_service.dart';
+import 'services/moderation_service.dart';
 import 'services/notifications_local_store.dart';
 import 'theme/theme_controller.dart';
 import 'utils/color_catalog.dart';
@@ -54,6 +55,7 @@ class _DastrassBootstrapState extends State<DastrassBootstrap> {
         CompareStore.instance.hydrate(),
         FavoritesStore.instance.hydrate(),
         NotificationsLocalStore.instance.load(),
+        ModerationService.instance.ensureLoaded(),
       ]).timeout(const Duration(seconds: 6));
     } catch (_) {
       // Best effort.

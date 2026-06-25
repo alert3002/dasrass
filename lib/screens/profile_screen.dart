@@ -1096,7 +1096,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const SizedBox(height: 12),
                         _themeOption(
                           title: 'Системная',
-                          desc: 'Тема берётся из настроек Windows, macOS или Android.',
+                          desc: 'Тема берётся из системных настроек устройства.',
                           active: tc.preference == ThemePref.system,
                           onTap: tc.setSystem,
                           onBg: onBg,

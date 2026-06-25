@@ -7,6 +7,7 @@ import '../services/dastrass_api.dart';
 import '../services/message_unread_hub.dart';
 import '../theme/app_theme.dart';
 import '../utils/network_error_message.dart';
+import '../widgets/report_block_sheet.dart';
 
 /// Чат по [users.views.api_messages_detail] + отправка [api_messages_send].
 class MessageThreadScreen extends StatefulWidget {
@@ -123,6 +124,26 @@ class _MessageThreadScreenState extends State<MessageThreadScreen> {
               Text(sub, style: TextStyle(fontSize: 12, color: muted, fontWeight: FontWeight.w400)),
           ],
         ),
+        actions: [
+          if (sub.isNotEmpty)
+            PopupMenuButton<String>(
+              onSelected: (v) async {
+                if (v == 'block') {
+                  await blockUserFromChat(
+                    context,
+                    phone: sub,
+                    onBlocked: () => context.pop(),
+                  );
+                }
+              },
+              itemBuilder: (ctx) => const [
+                PopupMenuItem(
+                  value: 'block',
+                  child: Text('Заблокировать пользователя'),
+                ),
+              ],
+            ),
+        ],
       ),
       body: Column(
         children: [

@@ -8,6 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../config/api_config.dart';
 import 'auth_service.dart';
+import 'blocked_phones_store.dart';
 import '../utils/shuffle_list.dart';
 
 class ApiException implements Exception {
@@ -250,6 +251,18 @@ class DastrassApi {
     return {'results': <dynamic>[], 'count': 0, 'total_count': 0};
   }
 
+  Future<Map<String, dynamic>> _withModeration(Map<String, dynamic> map) async {
+    await BlockedPhonesStore.instance.ensureLoaded();
+    final results = map['results'];
+    if (results is! List) return map;
+    final filtered = BlockedPhonesStore.instance.filterAds(results);
+    return {
+      ...map,
+      'results': filtered,
+      'count': filtered.length,
+    };
+  }
+
   String _adsShufflePoolKey(Map<String, String> query) {
     final q = Map<String, String>.from(query)
       ..remove('exclude')
@@ -305,10 +318,11 @@ class DastrassApi {
     try {
       final data = await get('/ads/', query);
       final map = _asAdsMap(data);
+      final moderated = await _withModeration(map);
       if (_shouldStoreShufflePool(query)) {
-        await _writeJsonCache(poolKey, map);
+        await _writeJsonCache(poolKey, moderated);
       }
-      return map;
+      return moderated;
     } catch (e) {
       final fallback = await _readShufflePool(poolKey);
       if (fallback != null) {
@@ -327,7 +341,7 @@ class DastrassApi {
     return _loadJsonWithCache<Map<String, dynamic>>(
       name: key,
       ttl: const Duration(minutes: 15),
-      fetch: () async => _asAdsMap(await get('/ads/', clean)),
+      fetch: () async => _withModeration(_asAdsMap(await get('/ads/', clean))),
     );
   }
 
@@ -722,6 +736,50 @@ class DastrassApi {
     if (data is Map && data['ok'] != true) {
       throw ApiException('${data['error'] ?? 'Не удалось удалить аккаунт'}');
     }
+  }
+
+  Future<void> reportContent({
+    required String targetType,
+    required String targetId,
+    required String reason,
+    String reportedPhone = '',
+    String details = '',
+  }) async {
+    final data = await postJson('/auth/report/', {
+      'target_type': targetType,
+      'target_id': targetId,
+      'reason': reason,
+      if (reportedPhone.isNotEmpty) 'reported_phone': reportedPhone,
+      if (details.isNotEmpty) 'details': details,
+    });
+    if (data is Map && data['ok'] != true) {
+      throw ApiException('${data['error'] ?? 'Не удалось отправить жалобу'}');
+    }
+  }
+
+  Future<void> blockUser({
+    required String phone,
+    String? adId,
+    String reason = 'abusive',
+    String details = '',
+  }) async {
+    final data = await postJson('/auth/block/', {
+      'phone': phone,
+      'reason': reason,
+      if (adId != null && adId.isNotEmpty) 'ad_id': adId,
+      if (details.isNotEmpty) 'details': details,
+    });
+    if (data is Map && data['ok'] != true) {
+      throw ApiException('${data['error'] ?? 'Не удалось заблокировать'}');
+    }
+  }
+
+  Future<List<String>> fetchBlockedPhones() async {
+    final data = await get('/auth/blocks/');
+    if (data is Map && data['ok'] == true && data['phones'] is List) {
+      return (data['phones'] as List).map((e) => '$e').toList();
+    }
+    return [];
   }
 
   Future<Map<String, dynamic>> uploadProfileAvatar(Uint8List bytes, String filename) async {

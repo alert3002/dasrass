@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' show min;
 
 import 'package:flutter/gestures.dart';
@@ -7,6 +8,7 @@ import 'package:go_router/go_router.dart';
 
 import '../services/auth_service.dart';
 import '../services/dastrass_api.dart';
+import '../services/moderation_service.dart';
 import '../utils/network_error_message.dart';
 import '../theme/app_theme.dart';
 import '../widgets/dastrass_app_drawer.dart';
@@ -249,6 +251,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final token = '${data['token'] ?? ''}';
       if (token.isEmpty) throw Exception('Нет токена в ответе');
       await AuthService.instance.setToken(token);
+      unawaited(ModerationService.instance.syncFromServer());
       if (!mounted) return;
       final r = widget.redirectTo;
       if (r != null && r.isNotEmpty) {
@@ -394,7 +397,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             ),
                             const TextSpan(
                               text:
-                                  ', а также подтверждаете, что вам исполнилось 18 лет.',
+                                  ', подтверждаете, что вам исполнилось 18 лет, и соглашаетесь с нулевой терпимостью к оскорбительному и незаконному контенту.',
                             ),
                           ],
                         ),

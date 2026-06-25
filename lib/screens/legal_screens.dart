@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../content/terms_text.dart';
 import '../theme/app_theme.dart';
 
 class AboutScreen extends StatelessWidget {
@@ -17,13 +18,13 @@ class AboutScreen extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_rounded),
           onPressed: () => context.pop(),
         ),
-        title: const Text('О dastrass'),
+        title: const Text('О Dasrass'),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Text(
-          'dastrass — доска объявлений: покупка, продажа и услуги рядом с вами.\n\n'
-          'Мобильное приложение и сайт используют один аккаунт и общие объявления.',
+          'Dasrass — доска объявлений: покупка, продажа и услуги в Таджикистане.\n\n'
+          'Мобильное приложение и сайт dasrass.com используют один аккаунт.',
           style: TextStyle(
             color: AppColors.textDark.withValues(alpha: 0.88),
             height: 1.45,
@@ -54,9 +55,7 @@ class TermsScreen extends StatelessWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Text(
-          'Условия использования сервиса dastrass.\n\n'
-          'Полный текст размещён на сайте. В приложении показана краткая справка; '
-          'при расхождении ориентируйтесь на актуальную версию на веб-сайте.',
+          kTermsOfUseText,
           style: TextStyle(
             color: AppColors.textDark.withValues(alpha: 0.88),
             height: 1.45,
@@ -87,9 +86,7 @@ class PrivacyScreen extends StatelessWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Text(
-          'Политика конфиденциальности dastrass.\n\n'
-          'Мы обрабатываем данные, необходимые для работы объявлений и учётной записи. '
-          'Подробности — на сайте в разделе «Конфиденциальность».',
+          kPrivacyPolicyText,
           style: TextStyle(
             color: AppColors.textDark.withValues(alpha: 0.88),
             height: 1.45,

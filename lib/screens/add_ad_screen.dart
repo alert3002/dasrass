@@ -16,6 +16,7 @@ import '../utils/ad_form_payload.dart';
 import '../utils/color_catalog.dart';
 import '../utils/local_video_preview.dart';
 import '../utils/locality_label.dart';
+import '../utils/content_filter.dart';
 import '../utils/network_error_message.dart';
 import '../utils/passenger_car.dart';
 import '../widgets/add_ad_category_tile.dart';
@@ -452,6 +453,15 @@ class _AddAdScreenState extends State<AddAdScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Выберите кузов')),
       );
+      return;
+    }
+
+    final filterErr = ContentFilter.validateListingText(
+      _titleCtrl.text.trim(),
+      _descCtrl.text.trim(),
+    );
+    if (filterErr != null) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(filterErr)));
       return;
     }
 

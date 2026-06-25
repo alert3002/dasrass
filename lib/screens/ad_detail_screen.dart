@@ -23,6 +23,7 @@ import '../utils/locality_label.dart';
 import '../utils/network_error_message.dart';
 import '../widgets/ad_listing_grid.dart';
 import '../widgets/progressive_network_image.dart';
+import '../widgets/report_block_sheet.dart';
 
 class AdDetailScreen extends StatefulWidget {
   const AdDetailScreen({super.key, required this.id});
@@ -407,6 +408,16 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
               await Share.share('${ad['title'] ?? ''}\n$url');
             },
           ),
+          if (!isMine)
+            IconButton(
+              icon: const Icon(Icons.more_vert_rounded),
+              onPressed: () => showReportBlockSheet(
+                context,
+                adId: '${ad['id']}',
+                sellerPhone: '${ad['phone'] ?? ''}',
+                onBlocked: () => context.pop(),
+              ),
+            ),
         ],
       ),
     );
