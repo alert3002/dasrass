@@ -15,11 +15,10 @@ import '../widgets/dastrass_mobile_tab_bar.dart';
 import '../widgets/profile_page_head.dart';
 import '../widgets/profile_my_ad_card.dart';
 
-/// Временно скрыто — подключим оплату позже.
-const _kProfileBalanceTabEnabled = false;
+/// Статистика и кнопка «Добавить объявление» в профиле.
+const _kProfileAdsStatsAndAddEnabled = true;
 
-/// Временно скрыто — статистика и кнопка «Добавить объявление».
-const _kProfileAdsStatsAndAddEnabled = false;
+const _kProfileBalanceTabEnabled = false;
 
 /// Профиль — мисли [frontend/src/pages/Profile.jsx]: данные, статистика, вкладки, карточки объявлений.
 class ProfileScreen extends StatefulWidget {
@@ -926,7 +925,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           _card(
             cardBg: cardBg,
             border: border,
-            child: Center(child: Text('У вас ещё нет объявлений.', style: TextStyle(color: onBg))),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text('У вас ещё нет объявлений.', style: TextStyle(color: onBg)),
+                const SizedBox(height: 12),
+                FilledButton.icon(
+                  onPressed: () => context.go('/add'),
+                  icon: const Icon(Icons.add, size: 20),
+                  label: const Text('Добавить объявление'),
+                ),
+              ],
+            ),
           )
         else
           Center(

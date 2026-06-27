@@ -23,8 +23,8 @@ class AboutScreen extends StatelessWidget {
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Text(
-          'Dasrass — доска объявлений: покупка, продажа и услуги в Таджикистане.\n\n'
-          'Мобильное приложение и сайт dasrass.com используют один аккаунт.',
+          'Dasrass — доска объявлений в Таджикистане: грузовики, автобусы, запчасти, недвижимость, услуги и вакансии.\n\n'
+          'В приложении можно искать объявления, публиковать свои, общаться с продавцами, сохранять избранное и смотреть видео-объявления.',
           style: TextStyle(
             color: AppColors.textDark.withValues(alpha: 0.88),
             height: 1.45,

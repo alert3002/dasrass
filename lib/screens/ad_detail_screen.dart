@@ -3,7 +3,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:video_player/video_player.dart';
 
@@ -22,6 +21,7 @@ import '../utils/time_ago.dart';
 import '../utils/locality_label.dart';
 import '../utils/network_error_message.dart';
 import '../widgets/ad_listing_grid.dart';
+import '../utils/share_text.dart';
 import '../widgets/progressive_network_image.dart';
 import '../widgets/report_block_sheet.dart';
 
@@ -401,12 +401,14 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
               color: isFav ? AppColors.primary : muted,
             ),
           ),
-          IconButton(
-            icon: const Icon(Icons.share_rounded),
-            onPressed: () async {
-              final url = '${ApiConfig.publicSiteOrigin}/ads/${ad['id']}';
-              await Share.share('${ad['title'] ?? ''}\n$url');
-            },
+          Builder(
+            builder: (shareCtx) => IconButton(
+              icon: const Icon(Icons.share_rounded),
+              onPressed: () async {
+                final url = '${ApiConfig.publicSiteOrigin}/ads/${ad['id']}';
+                await shareTextFromContext(shareCtx, '${ad['title'] ?? ''}\n$url');
+              },
+            ),
           ),
           if (!isMine)
             IconButton(

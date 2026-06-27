@@ -4,7 +4,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:video_player/video_player.dart';
 
 import '../config/api_config.dart';
@@ -19,6 +18,7 @@ import '../utils/network_error_message.dart';
 import '../utils/reels_feed_cache.dart';
 import '../utils/reels_feed_reload.dart';
 import '../utils/ad_format.dart';
+import '../utils/share_text.dart';
 import '../widgets/dastrass_app_drawer.dart';
 
 /// Лента Reels
@@ -417,11 +417,11 @@ class _ReelsScreenState extends State<ReelsScreen> {
     }
   }
 
-  Future<void> _share(_ReelAd ad) async {
+  Future<void> _share(BuildContext anchorContext, _ReelAd ad) async {
     final url = '${ApiConfig.publicSiteOrigin}/ads/${ad.id}';
     final title = ad.title;
     try {
-      await Share.share('$title\n$url', subject: title);
+      await shareTextFromContext(anchorContext, '$title\n$url', subject: title);
     } catch (_) {
       await _copyLink(ad);
     }
@@ -557,7 +557,7 @@ class _ReelsScreenState extends State<ReelsScreen> {
           favBusy: _favBusyId == ad.id,
           onToggleMute: () => _toggleMute(vc),
           onFavorite: () => _toggleFavorite(ad),
-          onShare: () => _share(ad),
+          onShare: (ctx) => _share(ctx, ad),
           onCopyLink: () => _copyLink(ad),
           onOpenAd: () {
             vc?.pause();
@@ -588,7 +588,7 @@ class _ReelSlide extends StatelessWidget {
   final bool favBusy;
   final VoidCallback onToggleMute;
   final VoidCallback onFavorite;
-  final VoidCallback onShare;
+  final void Function(BuildContext context) onShare;
   final VoidCallback onCopyLink;
   final VoidCallback onOpenAd;
 
@@ -638,11 +638,13 @@ class _ReelSlide extends StatelessWidget {
                 onTap: onFavorite,
               ),
               const SizedBox(height: 18),
-              _ReelIconBtn(
-                icon: Icons.share_rounded,
-                color: Colors.white,
-                busy: false,
-                onTap: onShare,
+              Builder(
+                builder: (shareCtx) => _ReelIconBtn(
+                  icon: Icons.share_rounded,
+                  color: Colors.white,
+                  busy: false,
+                  onTap: () => onShare(shareCtx),
+                ),
               ),
               const SizedBox(height: 18),
               _ReelIconBtn(

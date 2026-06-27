@@ -382,7 +382,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: [
                             const TextSpan(
                               text:
-                                  'Авторизуясь на сайте, вы подтверждаете, что принимаете условия ',
+                                  'Авторизуясь в приложении, вы подтверждаете, что принимаете условия ',
                             ),
                             TextSpan(
                               text: 'Пользовательского соглашения',
