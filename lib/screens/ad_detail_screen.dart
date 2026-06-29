@@ -22,6 +22,7 @@ import '../utils/locality_label.dart';
 import '../utils/network_error_message.dart';
 import '../widgets/ad_listing_grid.dart';
 import '../utils/share_text.dart';
+import '../widgets/ad_no_photo_placeholder.dart';
 import '../widgets/progressive_network_image.dart';
 import '../widgets/report_block_sheet.dart';
 
@@ -324,7 +325,7 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
                           padding: const EdgeInsets.only(bottom: 32),
                           children: [
                             _buildTopBar(_ad!, muted),
-                            _buildMockupGallery(_ad!, muted),
+                            _buildPhotoGallery(_ad!, muted),
                             Padding(
                               padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                               child: Column(
@@ -447,7 +448,7 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
     );
   }
 
-  Widget _buildMockupGallery(Map<String, dynamic> ad, Color muted) {
+  Widget _buildPhotoGallery(Map<String, dynamic> ad, Color muted) {
     final images = _images(ad);
     final videoUrl = normalizeMediaUrl('${ad['video_url'] ?? ''}');
     final hasVideo = videoUrl.isNotEmpty;
@@ -455,14 +456,9 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
     final videoSlideIndex = hasVideo ? images.length : -1;
 
     if (slideCount == 0) {
-      return AspectRatio(
+      return const AspectRatio(
         aspectRatio: 4 / 3,
-        child: ColoredBox(
-          color: adGalleryPhotoBg(context),
-          child: Center(
-            child: Text('Нет фото', style: TextStyle(color: muted, fontWeight: FontWeight.w700)),
-          ),
-        ),
+        child: AdNoPhotoPlaceholder.expand(),
       );
     }
 
@@ -495,12 +491,7 @@ class _AdDetailScreenState extends State<AdDetailScreen> {
                   imageUrl: url,
                   width: double.infinity,
                   backgroundColor: adGalleryPhotoBg(context),
-                  errorChild: Center(
-                    child: Text(
-                      'Фото недоступно',
-                      style: TextStyle(color: muted, fontWeight: FontWeight.w700),
-                    ),
-                  ),
+                  errorChild: const AdNoPhotoPlaceholder.expand(),
                 ),
               );
             },

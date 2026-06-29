@@ -131,7 +131,7 @@ class _IconFallback extends StatelessWidget {
       child: Icon(
         categoryIconForSlug(slug),
         size: 34,
-        color: AppColors.primary.withValues(alpha: 0.38),
+        color: AppColors.primary.withValues(alpha: 0.72),
       ),
     );
   }

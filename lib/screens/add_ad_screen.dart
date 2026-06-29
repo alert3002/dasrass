@@ -728,29 +728,9 @@ class _AddAdScreenState extends State<AddAdScreen> {
   }
 
   Widget _buildCategorySkeletonGrid() {
-    return Align(
-      alignment: Alignment.topCenter,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 640),
-        child: Column(
-          children: [
-            for (var row = 0; row < 4; row++) ...[
-              if (row > 0) const SizedBox(height: 8),
-              Row(
-                children: [
-                  for (var col = 0; col < 3; col++)
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsets.only(left: col == 0 ? 0 : 2.5, right: col == 2 ? 0 : 2.5),
-                        child: const AddAdCategoryTileSkeleton(),
-                      ),
-                    ),
-                ],
-              ),
-            ],
-          ],
-        ),
-      ),
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: 40),
+      child: Center(child: CircularProgressIndicator()),
     );
   }
 

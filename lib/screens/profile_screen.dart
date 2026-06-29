@@ -116,7 +116,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   String _formatDate(dynamic value) {
-    if (value == null || '$value'.isEmpty) return '—';
+    if (value == null || '$value'.isEmpty) return 'Не указана';
     try {
       final s = '$value';
       final d = DateTime.tryParse(s);
@@ -599,7 +599,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Expanded(
                     child: _readOnlyField(
                       'ФИО',
-                      _fullNameFromMap(p).isEmpty ? '—' : _fullNameFromMap(p),
+                      _fullNameFromMap(p).isEmpty ? 'Не указано' : _fullNameFromMap(p),
                       onBg,
                       muted,
                     ),
@@ -1047,7 +1047,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         cells: [
                           DataCell(Text(_formatDate(pay['date']), style: TextStyle(color: onBg))),
                           DataCell(Text('${pay['title'] ?? ''}', style: TextStyle(color: onBg))),
-                          DataCell(Text('${pay['method'] ?? '—'}', style: TextStyle(color: onBg))),
+                          DataCell(Text('${pay['method'] ?? 'Не указан'}', style: TextStyle(color: onBg))),
                           DataCell(
                             Text(
                               '${NumberFormat.decimalPattern('ru_RU').format(amt)} ${pay['currency'] ?? ''}',

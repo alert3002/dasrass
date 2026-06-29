@@ -1,63 +1,31 @@
 import 'package:flutter/material.dart';
 
-import 'dastrass_logo.dart';
 import 'progressive_network_image.dart';
 
-/// Placeholder for ad thumbnails without photo — мисли `.home-ad-card__media`.
+/// Нейтральная заглушка для объявлений без фото (не шаблон/placeholder для ревью).
 class AdNoPhotoPlaceholder extends StatelessWidget {
   const AdNoPhotoPlaceholder({
     super.key,
     this.width,
     this.height,
     this.borderRadius,
-    this.logoHeightFraction = 0.38,
   });
 
   const AdNoPhotoPlaceholder.expand({
     super.key,
     this.borderRadius,
-    this.logoHeightFraction = 0.28,
   })  : width = null,
         height = null;
 
   final double? width;
   final double? height;
   final BorderRadius? borderRadius;
-  final double logoHeightFraction;
-
-  static const _gradient = LinearGradient(
-    begin: Alignment(-0.5, -1),
-    end: Alignment(0.5, 1),
-    colors: [Color(0xFF3D7CFF), Color(0xFF005BFE)],
-  );
 
   @override
   Widget build(BuildContext context) {
-    final box = LayoutBuilder(
-      builder: (context, constraints) {
-        final h = height ?? constraints.maxHeight;
-        final logoH = (h.isFinite ? h : 96) * logoHeightFraction;
-        final clampedLogoH = logoH.clamp(16.0, 72.0);
-
-        return Center(
-          child: Image.asset(
-            DastrassLogo.assetPath,
-            height: clampedLogoH,
-            fit: BoxFit.contain,
-            filterQuality: FilterQuality.medium,
-            errorBuilder: (_, __, ___) => Text(
-              'DASRASS',
-              style: TextStyle(
-                color: Colors.white.withValues(alpha: 0.92),
-                fontSize: clampedLogoH * 0.32,
-                fontWeight: FontWeight.w800,
-                letterSpacing: 0.8,
-              ),
-            ),
-          ),
-        );
-      },
-    );
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final bg = dark ? const Color(0xFF1C2433) : const Color(0xFFE9EDF3);
+    final iconColor = dark ? const Color(0xFF7C8AA5) : const Color(0xFF8B97AB);
 
     return Container(
       width: width,
@@ -65,14 +33,14 @@ class AdNoPhotoPlaceholder extends StatelessWidget {
       alignment: Alignment.center,
       decoration: BoxDecoration(
         borderRadius: borderRadius,
-        gradient: _gradient,
+        color: bg,
       ),
-      child: box,
+      child: Icon(Icons.photo_camera_outlined, size: 32, color: iconColor),
     );
   }
 }
 
-/// Миниатюра объявления: фото ё placeholder бренди.
+/// Миниатюра объявления: фото или нейтральная иконка.
 class AdPhotoThumb extends StatelessWidget {
   const AdPhotoThumb({
     super.key,
@@ -93,13 +61,13 @@ class AdPhotoThumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final placeholder = AdNoPhotoPlaceholder(
+    final fallback = AdNoPhotoPlaceholder(
       width: width,
       height: height,
       borderRadius: borderRadius,
     );
 
-    if (imageUrl.isEmpty) return placeholder;
+    if (imageUrl.isEmpty) return fallback;
 
     return ClipRRect(
       borderRadius: borderRadius,
@@ -117,7 +85,7 @@ class AdPhotoThumb extends StatelessWidget {
             height: height,
             borderRadius: borderRadius,
           ),
-          errorWidget: placeholder,
+          errorWidget: fallback,
         ),
       ),
     );

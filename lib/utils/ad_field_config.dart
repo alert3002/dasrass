@@ -435,7 +435,7 @@ List<AdDynamicField> getHomeCharacteristicFields(
   if (!isHomeCategory(categorySlug)) {
     return [
       AdDynamicField.select('condition', 'Состояние', true, const ['Новый', 'Б/у'], section: _char),
-      AdDynamicField.text('type', 'Тип товара', true, placeholder: 'Укажите вид товара', section: _char),
+      AdDynamicField.text('type', 'Тип товара', true, placeholder: 'Диван, холодильник', section: _char),
       AdDynamicField.select('color', 'Цвет', false, colors, section: _char),
     ];
   }
@@ -450,7 +450,7 @@ List<AdDynamicField> getHomeCharacteristicFields(
   }
   return [
     AdDynamicField.select('condition', 'Состояние', true, const ['Новый', 'Б/у'], section: _char),
-    AdDynamicField.text('type', 'Тип товара', true, placeholder: 'Укажите вид товара', section: _char),
+    AdDynamicField.text('type', 'Тип товара', true, placeholder: 'Диван, холодильник', section: _char),
     AdDynamicField.select('color', 'Цвет', false, colors, section: _char),
   ];
 }
@@ -463,12 +463,12 @@ List<AdDynamicField> getConstructionCharacteristicFields(
   if (!isConstructionCategory(categorySlug)) {
     return [
       AdDynamicField.select('condition', 'Состояние', true, const ['Новый', 'Б/у'], section: _char),
-      AdDynamicField.text('type', 'Тип', true, placeholder: 'Укажите товар или материал', section: _char),
+      AdDynamicField.text('type', 'Тип', true, placeholder: 'Цемент, кирпич', section: _char),
     ];
   }
   return [
     AdDynamicField.select('condition', 'Состояние', true, const ['Новый', 'Б/у'], section: _char),
-    AdDynamicField.text('type', 'Тип', true, placeholder: 'Укажите товар или материал', section: _char),
+    AdDynamicField.text('type', 'Тип', true, placeholder: 'Цемент, кирпич', section: _char),
   ];
 }
 
@@ -478,7 +478,7 @@ List<AdDynamicField> getServicesCharacteristicFields(
   List<String> path,
 ) {
   return [
-    AdDynamicField.text('type', 'Вид услуги', true, placeholder: 'Укажите услугу', section: _char),
+    AdDynamicField.text('type', 'Вид услуги', true, placeholder: 'Ремонт, доставка', section: _char),
     AdDynamicField.text('service_area', 'Регион / зона', false, placeholder: 'Душанбе…', section: _char),
     AdDynamicField.text('experience', 'Опыт / стаж', false, placeholder: 'от 3 лет', section: _char),
   ];
@@ -491,7 +491,7 @@ List<AdDynamicField> getCatalogCharacteristicFields(
 ) {
   return [
     AdDynamicField.select('condition', 'Состояние', true, const ['Новый', 'Б/у'], section: _char),
-    AdDynamicField.text('type', 'Тип', true, placeholder: 'Укажите вид', section: _char),
+    AdDynamicField.text('type', 'Тип', true, placeholder: 'Грузовик, автобус', section: _char),
   ];
 }
 

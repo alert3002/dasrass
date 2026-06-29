@@ -15,8 +15,6 @@ import '../theme/app_theme.dart';
 import '../utils/category_icons.dart';
 import '../utils/ad_format.dart';
 import '../utils/network_error_message.dart';
-import '../utils/shuffle_list.dart';
-import '../widgets/dastrass_logo.dart';
 import '../widgets/dastrass_mobile_tab_bar.dart';
 import '../widgets/progressive_network_image.dart';
 
@@ -207,7 +205,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final ads = await _safe<Map<String, dynamic>>(
       () => api.ads({
         'limit': '$_kAdsPageSize',
-        'shuffle': '1',
+        'has_image': '1',
       }),
       <String, dynamic>{'results': <dynamic>[], 'total_count': 0},
       onError: (e) {
@@ -219,7 +217,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final total = int.tryParse('${ads['total_count']}') ?? results.length;
     if (mounted) {
       setState(() {
-        _displayedAds = shuffleList(List<dynamic>.from(results));
+        _displayedAds = List<dynamic>.from(results);
         _adsTotal = total;
         _loadingMore = false;
         _showLoadMoreButton = false;
@@ -245,7 +243,7 @@ class _HomeScreenState extends State<HomeScreen> {
           .join(',');
       final ads = await DastrassApi.instance.ads({
         'limit': '$_kAdsPageSize',
-        'shuffle': '1',
+        'has_image': '1',
         if (exclude.isNotEmpty) 'exclude': exclude,
       });
       final results = (ads['results'] as List<dynamic>?) ?? [];
@@ -583,15 +581,30 @@ class _HomeMainColumn extends StatelessWidget {
               ),
               const SizedBox(height: 10),
               if (displayedAds.isEmpty)
-                SizedBox(
-                  height: 80,
-                  child: Center(
-                    child: Text(
-                      'Нет объявлений',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.inventory_2_outlined,
+                        size: 40,
+                        color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.35),
                       ),
-                    ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Сейчас нет объявлений в этой подборке',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.55),
+                          height: 1.35,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      OutlinedButton(
+                        onPressed: () => context.push('/ads'),
+                        child: const Text('Смотреть все объявления'),
+                      ),
+                    ],
                   ),
                 )
               else
@@ -994,18 +1007,42 @@ class _HomeFallbackBanner extends StatelessWidget {
       child: SizedBox(
         height: 178,
         width: double.infinity,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [Color(0xFF3D7CFF), Color(0xFF005BFE)],
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            Image.asset(
+              'assets/images/logo1.jpg',
+              fit: BoxFit.cover,
+              errorBuilder: (_, _, _) => const ColoredBox(color: Color(0xFF005BFE)),
             ),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Center(
-            child: DastrassLogo(height: 56, maxWidth: 220),
-          ),
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Colors.black.withValues(alpha: 0.15),
+                    Colors.black.withValues(alpha: 0.55),
+                  ],
+                ),
+              ),
+            ),
+            const Padding(
+              padding: EdgeInsets.all(20),
+              child: Align(
+                alignment: Alignment.bottomLeft,
+                child: Text(
+                  'Объявления в Таджикистане',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 18,
+                    height: 1.2,
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );
