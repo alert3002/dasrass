@@ -85,9 +85,8 @@ class ProfileMyAdCard extends StatelessWidget {
                               imageUrl: img,
                               fit: BoxFit.cover,
                             )
-                          : const AdNoPhotoPlaceholder(
+                          : const AdNoPhotoPlaceholder.expand(
                               borderRadius: BorderRadius.zero,
-                              logoHeightFraction: 0.22,
                             ),
                     ),
                   ),

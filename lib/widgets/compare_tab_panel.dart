@@ -460,7 +460,6 @@ class _CompareBoardState extends State<_CompareBoard> {
       width: size,
       height: size,
       borderRadius: BorderRadius.circular(10),
-      logoHeightFraction: 0.34,
     );
   }
 }
